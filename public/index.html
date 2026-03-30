@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Sign in</h1>
+
+    <!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завантаження та скачування файлів</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Завантаження файлу</h1>
+    
+    <!-- Форма для завантаження файлу -->
+    <h1>Завантаження .txt файлу</h1>
+
+<input type="file" id="fileInput" accept=".txt" required>
+<br><br>
+<button onclick="uploadFile()">Завантажити .txt файл</button>
+
+<script>
+async function uploadFile() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if (!file || !file.name.endsWith('.txt')) {
+        alert('Будь ласка, оберіть тільки .txt файл!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',        // важливо!
+                'Filename': file.name                // передаємо оригінальну назву
+            },
+            body: file                               // передаємо файл напряму
+        });
+
+        if (response.ok) {
+            const text = await response.text();
+            document.body.innerHTML = text;   // показуємо відповідь від сервера
+        } else {
+            alert('Помилка: ' + response.statusText);
+        }
+    } catch (err) {
+        alert('Помилка завантаження: ' + err.message);
+    }
+}
+</script>
+
+    <hr>
+    
+    <h2>Скачування файлу за назвою</h2>
+    
+    <input type="text" id="fileNameInput" placeholder="Введіть назву файлу (наприклад txt-123.txt)" />
+    <br><br>
+    <!-- Кнопка звичайного скачування -->
+    <button onclick="downloadByName('download')">Download</button>
+    <!-- Кнопка скачування зі стисненням -->
+    <button onclick="downloadByName('download-compression')">Download with Compression</button>
+
+    <script>
+        function downloadByName(route) {
+            const fileName = document.getElementById('fileNameInput').value;
+            let queryString = '';
+
+            if (fileName) {
+                queryString =  `?filename=${encodeURIComponent(fileName)}`;
+            }
+
+            // редірект на бек з query params
+            window.location.href = `/${route}${queryString}`;
+        }
+    </script>
+</body>
+</html>
+</body>
+</html>
